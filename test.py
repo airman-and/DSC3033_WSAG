@@ -25,6 +25,10 @@ parser.add_argument("--test_batch_size", type=int, default=1)
 parser.add_argument('--test_num_workers', type=int, default=8)
 parser.add_argument('--gpu', type=str, default='0')
 
+parser.add_argument('--gamma1', type=float, default=0.6)
+parser.add_argument('--gamma2', type=float, default=0.6)
+parser.add_argument('--alpha', type=float, default=0.6)
+parser.add_argument('--cont_temperature', type=float, default=0.5)
 
 
 args = parser.parse_args()

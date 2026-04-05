@@ -44,11 +44,19 @@ You should modify the 'data_root' according to your dataset path.
 
 ## Training
 
-- Seen split
+- AGD20K-Seen
 > python train.py --divide Seen
 > 
-- Unseen split
+- AGD20K-Unseen
 > python train.py --divide Unseen
+
+
+## Test
+- AGD20K-Seen
+> python test.py --model_file [checkpoint.pth] --divide Seen
+- AGD20K-Unseen
+> python test.py --model_file [checkpoint.pth] --divide Unseen
+
 
 
 
