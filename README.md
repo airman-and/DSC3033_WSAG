@@ -45,10 +45,10 @@ You should modify the 'data_root' according to your dataset path.
 ## Training
 
 - Seen split
-> python train.py --exp_name SelectiveCL --divide Seen
+> python train.py --divide Seen
 > 
 - Unseen split
-> python train.py --exp_name SelectiveCL --divide Unseen
+> python train.py --divide Unseen
 
 
 
