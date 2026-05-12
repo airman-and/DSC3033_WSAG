@@ -1,4 +1,6 @@
-# Selective Contrastive Learning for Weakly Supervised Affordance Grounding (ICCV 2025)
+# DSC3033_WSAG
+
+## Selective Contrastive Learning for Weakly Supervised Affordance Grounding (ICCV 2025)
 WonJun Moon*</sup>, Hyun Seok Seong*</sup>, Jae-Pil Heo</sup> (*: equal contribution)
 
 [[Arxiv](https://arxiv.org/abs/2508.07877)]
