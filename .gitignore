@@ -1,0 +1,25 @@
+# Python/runtime artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Local environments
+.venv/
+venv/
+env/
+selectivecl_env/
+
+# Model weights, datasets, and generated experiment outputs
+*.pth
+*.pt
+*.t7
+checkpoints/
+save_models/
+smoke_models/
+demo_runs/
+full_runs/
+visual_runs/
+
+# Local editor/system files
+.DS_Store

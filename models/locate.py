@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Union
 
 from fast_pytorch_kmeans import KMeans
-from pkg_resources import packaging
+import packaging
 
 from loss.loss import ContrastiveLoss, PixelContrastiveLoss
 from models.dino import vision_transformer as vits

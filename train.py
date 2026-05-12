@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser()
 ##  path
-parser.add_argument('--data_root', type=str, default='/DATA/AGD20K')
+parser.add_argument('--data_root', type=str, default='/root/workspace/andycho/CV/AGD20K')
 parser.add_argument('--save_root', type=str, default='save_models')
 parser.add_argument("--divide", type=str, default="Seen", choices=["Seen", "Unseen", "HICO"])
 ##  image
@@ -37,6 +37,7 @@ parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--momentum', type=float, default=0.9)
 parser.add_argument('--weight_decay', type=float, default=5e-4)
 parser.add_argument('--show_step', type=int, default=500)
+parser.add_argument('--max_train_steps', type=int, default=None)
 parser.add_argument('--gpu', type=str, default='0')
 
 parser.add_argument('--debug', action='store_true', default=False)
@@ -51,9 +52,17 @@ parser.add_argument('--alpha', type=float, default=0.6)
 #### test
 parser.add_argument("--test_batch_size", type=int, default=1)
 parser.add_argument('--test_num_workers', type=int, default=8)
+parser.add_argument('--max_test_steps', type=int, default=None)
 
 args = parser.parse_args()
-torch.cuda.set_device('cuda:' + args.gpu)
+
+# Set device: use GPU if available, otherwise CPU
+if torch.cuda.is_available():
+    torch.cuda.set_device('cuda:' + args.gpu)
+    device = torch.device('cuda:' + args.gpu)
+else:
+    device = torch.device('cpu')
+    args.gpu = '-1'  # Indicate CPU usage
 
 if args.divide == "Seen":
     aff_list = ['beat', "boxing", "brush_with", "carry", "catch", "cut", "cut_with", "drag", 'drink_with',
@@ -162,6 +171,8 @@ if __name__ == '__main__':
     best_m_kld = 1000
 
     current_iter = 0
+    train_steps_done = 0
+    stop_training = False
     for epoch in range(args.epochs):
         model.train()
         logger.info('LR = ' + str(scheduler.get_last_lr()))
@@ -189,6 +200,7 @@ if __name__ == '__main__':
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            train_steps_done += 1
 
             cur_batch = exo.size(0)
             exo_acc = 100. * compute_cls_acc(logits['aff_exo'].mean(1), aff_label)
@@ -206,6 +218,11 @@ if __name__ == '__main__':
 
                 current_iter += 1
 
+            if args.max_train_steps is not None and train_steps_done >= args.max_train_steps:
+                logger.info('Reached max_train_steps=' + str(args.max_train_steps))
+                stop_training = True
+                break
+
         scheduler.step()
 
         KLs, meanKLs = [], []
@@ -216,19 +233,28 @@ if __name__ == '__main__':
         reeNSS, remNSS = [], []
         model.eval()
 
-        GT_path = args.divide + "_gt.t7"
-        if not os.path.exists(GT_path):
-            process_gt(args)
+        GT_masks = None
+        if args.max_test_steps is None:
+            GT_path = args.divide + "_gt.t7"
+            if not os.path.exists(GT_path):
+                process_gt(args)
 
-        GT_masks = torch.load(args.divide + "_gt.t7")
+            GT_masks = torch.load(args.divide + "_gt.t7")
 
         for step, (image, label, mask_path) in enumerate(TestLoader):
 
             cluster_sim_maps = []
 
-            names = mask_path[0].split("/")
-            key = names[-3] + "_" + names[-2] + "_" + names[-1]
-            GT_mask = GT_masks[key]
+            if args.max_test_steps is not None and step >= args.max_test_steps:
+                logger.info('Reached max_test_steps=' + str(args.max_test_steps))
+                break
+
+            if GT_masks is None:
+                GT_mask = cv2.imread(mask_path[0], cv2.IMREAD_GRAYSCALE)
+            else:
+                names = mask_path[0].split("/")
+                key = names[-3] + "_" + names[-2] + "_" + names[-1]
+                GT_mask = GT_masks[key]
             GT_mask = GT_mask / 255.0
 
             GT_mask = cv2.resize(GT_mask, (args.crop_size, args.crop_size))
@@ -287,3 +313,6 @@ if __name__ == '__main__':
             best_rem_epoch = epoch
             best_rem_sim = mremSIM
             best_rem_nss = mremNSS
+
+        if stop_training:
+            break
