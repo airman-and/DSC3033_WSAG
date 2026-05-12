@@ -27,17 +27,26 @@ activation from irrelevant areas toward meaningful affordance cues. Experimental
 ----------
 
 ## Requirements
-Install following packages.
+The current workspace uses the `selectivecl` conda environment. Recreate it
+from `environment.yml` instead of committing or copying a local environment
+directory.
+
+```bash
+conda env create -f environment.yml
+conda activate selectivecl
 ```
-- python=3.7
-- fast-pytorch-kmeans
-- regex
-- ftfy
-- pycocotools
-- torch==1.9.0
-- torchvision==0.10.0
-- git+https://github.com/openai/CLIP.git
+
+If you already have a `selectivecl` environment, update it with:
+
+```bash
+conda env update -n selectivecl -f environment.yml --prune
+conda activate selectivecl
 ```
+
+`environment.yml` is exported from the working conda environment and pins the
+conda and pip dependencies used here, including Python 3.7.16, CUDA Toolkit
+11.1.1, PyTorch 1.9.0, torchvision 0.10.0, OpenAI CLIP at a fixed Git commit,
+`fast-pytorch-kmeans`, `pycocotools`, OpenCV, matplotlib, and notebook support.
 
 ## Dataset
 We follow the dataset setup from the original [LOCATE](https://github.com/Reagan1311/LOCATE) repository.
