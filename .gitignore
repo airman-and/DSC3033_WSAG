@@ -17,9 +17,12 @@ selectivecl_env/
 checkpoints/
 save_models/
 smoke_models/
+demo_smoke_models/
 demo_runs/
 full_runs/
 visual_runs/
+group1_full_training_logs/
+group1_full_training_models/
 
 # Local editor/system files
 .DS_Store

@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data_root', type=str, default='/root/workspace/andycho/CV/AGD20K')
 parser.add_argument('--model_file', type=str, default='path_to_ckpt')
 parser.add_argument('--save_path', type=str, default='./save_preds')
+#OWN CODE: Optional visualization export flags for the live demo notebook.
 parser.add_argument('--save_visuals', action='store_true')
 parser.add_argument('--save_heatmaps', action='store_true')
 parser.add_argument('--max_save_images', type=int, default=None)
@@ -66,6 +67,7 @@ def post_process(KLs, SIM, NSS, ego_pred, GT_mask, args):
     return KLs, SIM, NSS, kld
 
 
+#OWN CODE: Helpers below save qualitative heatmap/overlay outputs for the demo.
 def pred_to_map(pred, crop_size):
     pred = np.array(pred.squeeze().data.cpu())
     return normalize_map(pred, crop_size)
@@ -152,6 +154,7 @@ if __name__ == '__main__':
         process_gt(args)
     GT_masks = torch.load(args.divide + "_gt.t7")
     overlay_dir, heatmap_dir = None, None
+    #OWN CODE: Create visualization directories only when the demo export flag is enabled.
     if args.save_visuals:
         overlay_dir, heatmap_dir = prepare_visual_dirs(args)
 
@@ -165,6 +168,7 @@ if __name__ == '__main__':
         with torch.no_grad():
             ego_pred, refined_CLIP_ego_ego, refined_CLIP_ego_mean = model.test_forward(image.cuda(), label.long().cuda())
 
+        #OWN CODE: Save a bounded set of visual predictions for presentation panels.
         if args.save_visuals:
             save_visualizations([
                 ("ego_pred", ego_pred),

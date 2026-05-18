@@ -79,5 +79,91 @@ AGD20K-Unseen | [checkpoint](https://drive.google.com/file/d/1YojVtXtl4gCiqDRDOp
 HICO-IIF | [checkpoint](https://drive.google.com/file/d/1fOIarlqETEpY7JrqUWjgzvHtwCzRfeGb/view?usp=sharing)
 
 
+## Group1 Notebooks and Colab Requirements
+
+This repository includes two project submission notebooks:
+
+- `Group1-full-training.ipynb`: full-training reproduction summary and optional 15-epoch rerun command.
+- `Group1-demo.ipynb`: live demo notebook with a short smoke-training example, checkpoint inference, and five visualized predictions.
+
+Both notebooks are written in dual-mode style. They detect whether they are
+running on this GPU server or on Google Colab.
+
+### Required Colab Setup
+
+1. Enable a GPU runtime in Colab.
+
+   Use `Runtime > Change runtime type > GPU`. CPU execution is not recommended
+   because SelectiveCL uses DINO, CLIP, and dense test-set inference.
+
+2. Prepare AGD20K in Google Drive.
+
+   The notebooks expect this default path in Colab:
+
+   ```python
+   DATA_ROOT = Path('/content/drive/MyDrive/AGD20K')
+   ```
+
+   The expected directory structure is:
+
+   ```text
+   AGD20K/
+     Seen/trainset/exocentric
+     Seen/trainset/egocentric
+     Seen/testset/egocentric
+     Seen/testset/GT
+     Unseen/trainset/exocentric
+     Unseen/trainset/egocentric
+     Unseen/testset/egocentric
+     Unseen/testset/GT
+   ```
+
+3. Mount Google Drive when prompted.
+
+   In Colab, the notebooks call:
+
+   ```python
+   drive.mount('/content/drive')
+   ```
+
+4. Ensure checkpoint access.
+
+   The notebooks can download the official checkpoints with `gdown`. If Google
+   Drive download quota or access blocks the automatic download, place the files
+   manually under:
+
+   ```text
+   /content/SelectiveCL/checkpoints/agd20k_seen.pth
+   /content/SelectiveCL/checkpoints/agd20k_unseen.pth
+   ```
+
+   `Group1-demo.ipynb` only needs `agd20k_seen.pth`.
+
+### Recommended Colab Execution Order
+
+1. Open `Group1-demo.ipynb` first.
+2. Select a GPU runtime.
+3. Run the setup and checkpoint cells.
+4. Keep `RUN_MINIMAL_TRAINING = True` to run the two-step smoke training
+   example during the live demo. Set it to `False` only to skip execution and
+   review the saved smoke log.
+5. Run limited visual inference and inspect the five output panels.
+6. Open `Group1-full-training.ipynb` to review the full-training setup,
+   training-log scores, and KLD/SIM/NSS reproduction tables.
+
+The full-training notebook is configured with `RUN_FULL_TRAINING = False` by
+default so evaluators can review the saved reference logs and metric tables
+without starting a multi-hour job. Set it to `True` only when you explicitly
+want to rerun the 15-epoch AGD20K training job.
+
+### Version Notes
+
+The original working environment is pinned in `environment.yml` and uses Python
+3.7.16, CUDA Toolkit 11.1.1, PyTorch 1.9.0, and torchvision 0.10.0. Colab often
+uses newer Python and PyTorch versions, so dependency installation may require
+minor adjustment if Colab changes its base image.
+
+
+
 ## Licence
 Our codes are released under [MIT](https://opensource.org/licenses/MIT) license.

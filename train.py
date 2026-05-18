@@ -37,6 +37,7 @@ parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--momentum', type=float, default=0.9)
 parser.add_argument('--weight_decay', type=float, default=5e-4)
 parser.add_argument('--show_step', type=int, default=500)
+#OWN CODE: Optional step limit used for the short live-demo smoke training run.
 parser.add_argument('--max_train_steps', type=int, default=None)
 parser.add_argument('--gpu', type=str, default='0')
 
@@ -52,6 +53,7 @@ parser.add_argument('--alpha', type=float, default=0.6)
 #### test
 parser.add_argument("--test_batch_size", type=int, default=1)
 parser.add_argument('--test_num_workers', type=int, default=8)
+#OWN CODE: Optional evaluation step limit keeps smoke runs under the demo time budget.
 parser.add_argument('--max_test_steps', type=int, default=None)
 
 args = parser.parse_args()
@@ -218,6 +220,7 @@ if __name__ == '__main__':
 
                 current_iter += 1
 
+            #OWN CODE: Stop early only for smoke/demo runs; full training leaves this unset.
             if args.max_train_steps is not None and train_steps_done >= args.max_train_steps:
                 logger.info('Reached max_train_steps=' + str(args.max_train_steps))
                 stop_training = True
@@ -234,6 +237,7 @@ if __name__ == '__main__':
         model.eval()
 
         GT_masks = None
+        #OWN CODE: Limited test runs read masks directly instead of materializing the full GT cache.
         if args.max_test_steps is None:
             GT_path = args.divide + "_gt.t7"
             if not os.path.exists(GT_path):
@@ -245,6 +249,7 @@ if __name__ == '__main__':
 
             cluster_sim_maps = []
 
+            #OWN CODE: Stop early only for smoke/demo evaluation.
             if args.max_test_steps is not None and step >= args.max_test_steps:
                 logger.info('Reached max_test_steps=' + str(args.max_test_steps))
                 break

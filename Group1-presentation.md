@@ -6,7 +6,7 @@ Selective Contrastive Learning for Weakly Supervised Affordance Grounding
 - ICCV 2025
 - WonJun Moon, Hyun Seok Seong, Jae-Pil Heo
 - DSC3032 Deep Learning 1 Final Project
-- Group X
+- Group 1
 
 Speaker note:
 This presentation explains the paper, reproduces the AGD20K-Seen setting, and demonstrates inference with trained SelectiveCL checkpoints.
@@ -117,7 +117,7 @@ Speaker note:
 The official checkpoint reproduces the paper metric exactly for AGD20K-Seen. The local full training run is close to the paper result.
 
 ## Slide 11: Demo Plan
-The live demo uses `GroupX-demo.ipynb`.
+The live demo uses `Group1-demo.ipynb`.
 
 - Verify environment, data paths, and checkpoint paths.
 - Run limited visual inference on AGD20K-Seen.
